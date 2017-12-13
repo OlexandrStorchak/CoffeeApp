@@ -3,4 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="for_exit_click_again">Для виходу натисніть ще раз</string>
+    <string name="auth_failed_toast">Помилка аутентифікації</string>
+    <string name="try_again_button">Спробувати ще</string>
 </resources>
