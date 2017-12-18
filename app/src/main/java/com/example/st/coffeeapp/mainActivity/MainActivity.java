@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -18,33 +17,36 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import static com.example.st.coffeeapp.Const.DISCOUNT_FRAGMENT_TAG;
+import static com.example.st.coffeeapp.Const.MENU_FRAGMENT_TAG;
 
 public class MainActivity extends AppCompatActivity implements MainActivityInterface {
 
-    public static final String MENU_FRAGMENT_TAG = "menu";
-    public static final String TAG = "tag";
+
+
     public static final int RC_SIGN_IN = 13;
     private FirebaseAuth firebaseAuth;
     private boolean doubleBackToExitPressedOnce = false;
     ProgressBar mainProgressBar;
     Button buttonTryAgain;
+    private android.support.v4.app.FragmentManager fragmentManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
         firebaseAuth = FirebaseAuth.getInstance();
-        mainProgressBar = (ProgressBar) findViewById(R.id.mainactivity_progress);
-        buttonTryAgain = (Button) findViewById(R.id.mainactivity_button_tryagain);
+        mainProgressBar = findViewById(R.id.mainactivity_progress);
+        buttonTryAgain = findViewById(R.id.mainactivity_button_tryagain);
         buttonTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
             showMenuFragment();
             showProgressBar(false);
         } else {
-            if (getSupportFragmentManager().findFragmentByTag(MENU_FRAGMENT_TAG) != null) {
-                getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager()
+            if (fragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG) != null) {
+                fragmentManager.beginTransaction().remove(fragmentManager
                         .findFragmentByTag(MENU_FRAGMENT_TAG)).commit();
                 //Add button for reSignIn manually
             }
@@ -91,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
     @Override
     public void showMenuFragment() {
-        if (getSupportFragmentManager().findFragmentByTag(MENU_FRAGMENT_TAG) == null) {
-            getSupportFragmentManager().beginTransaction()
+        if (fragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG) == null) {
+            fragmentManager.beginTransaction()
                     .add(R.id.mainframe, new menuFragment(), MENU_FRAGMENT_TAG).commit();
 
         } else {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.mainframe, getSupportFragmentManager()
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mainframe, fragmentManager
                             .findFragmentByTag(MENU_FRAGMENT_TAG)).commit();
 
         }
@@ -160,12 +162,21 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            signOut();
-            finish();
-            return;
+
+        if (fragmentManager.findFragmentByTag(DISCOUNT_FRAGMENT_TAG)!=null
+                && fragmentManager.findFragmentByTag(DISCOUNT_FRAGMENT_TAG).isAdded()
+                && !fragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG).isAdded()) {
+            //fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("discount")).commit();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.mainframe,fragmentManager.findFragmentByTag(MENU_FRAGMENT_TAG)).commit();
+
         }
+            if (doubleBackToExitPressedOnce) {
+                signOut();
+                finish();
+                return;
+            }
+
 
         this.doubleBackToExitPressedOnce = true;
         Toast.makeText(this, R.string.for_exit_click_again, Toast.LENGTH_SHORT).show();
@@ -183,4 +194,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
     public void signOut() {
         firebaseAuth.signOut();
     }
+
+
 }
