@@ -12,7 +12,7 @@ import com.google.zxing.common.BitMatrix;
 public class QRGenerator {
     private final static int QRcodeWidth = 500;
 
-    private Context context;
+    private final Context context;
 
     public QRGenerator(Context context) {
         this.context = context;

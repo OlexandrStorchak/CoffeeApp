@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
 
 
-    public static final int RC_SIGN_IN = 13;
+    private static final int RC_SIGN_IN = 13;
     private FirebaseAuth firebaseAuth;
     private boolean doubleBackToExitPressedOnce = false;
-    ProgressBar mainProgressBar;
-    Button buttonTryAgain;
+    private ProgressBar mainProgressBar;
+    private Button buttonTryAgain;
     private android.support.v4.app.FragmentManager fragmentManager;
 
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
     }
 
-    void showProgressBar(boolean show) {
+    private void showProgressBar(boolean show) {
         if (show) {
             mainProgressBar.setVisibility(View.VISIBLE);
         } else {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
         }
     }
 
-    void isLogin(boolean login) {
+    private void isLogin(boolean login) {
         if (login) {
             showMenuFragment();
             showProgressBar(false);
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
         }
     }
 
-    void signIn() {
+    private void signIn() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
