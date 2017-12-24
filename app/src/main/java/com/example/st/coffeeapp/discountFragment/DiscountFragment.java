@@ -1,22 +1,25 @@
 package com.example.st.coffeeapp.discountFragment;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
-import com.example.st.coffeeapp.QRGenerator;
 import com.example.st.coffeeapp.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.zxing.WriterException;
 
 
 public class DiscountFragment extends Fragment {
 
+
+    private ImageView imageQr;
+    private ProgressBar progressBar;
 
     public DiscountFragment() {
         // Required empty public constructor
@@ -24,22 +27,31 @@ public class DiscountFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_discount, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        QRGenerator qrGenerator = new QRGenerator(getContext());
-        ImageView imageQr = view.findViewById(R.id.imageQr);
-        try {
-            imageQr.setImageBitmap(qrGenerator.generateQr(FirebaseAuth.getInstance().getCurrentUser().getUid()));
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+        imageQr = view.findViewById(R.id.imageQr);
+        progressBar = view.findViewById(R.id.discountProgress);
+        new GenerateQRAsync(this).execute();
+
+
+    }
+
+    protected void setQR(Bitmap bitmap) {
+        imageQr.setImageBitmap(bitmap);
+        imageQr.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    protected void setProgressBar(){
+        progressBar.setVisibility(View.VISIBLE);
+        imageQr.setVisibility(View.GONE);
     }
 
 
